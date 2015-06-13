@@ -6,13 +6,13 @@
 #include "sys/stat.h"
 #include "unistd.h"
 
-char err_buf[100];
 #define check_null(A) { \
 		if (A == NULL) \
 			exit(EXIT_FAILURE); }
 #define check_less_zero(A) {   \
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
+
 void send_message(FILE *f);
 void loop(void);
 
@@ -42,18 +42,24 @@ int main(int argc, char **argv)
  */
 void send_message(FILE *f)
 {
-	char msg_buf[100];
+	char msg_buf[256];
+	char file_buf[256];
 	fseek(f, 0L, SEEK_END);
 	size_t sz = ftell(f);
 	fseek(f, 0L, SEEK_SET);
-	if (sz == 0)
+	if (sz <= 2) /* some weird characters */
 		return;
-	char *buffer = malloc(sz);
+	fread(file_buf, 1, sizeof(file_buf), f);
+	sprintf(msg_buf, "echo \"%s\" > %s/log.txt", file_buf, gitd_directory);
+/*	char *buffer = malloc(sz);
 	check_null(buffer);
 	fread(buffer, 1, sz, f);
 	sprintf(msg_buf, "wall \"%s\"", buffer);
 	system(msg_buf);
-	free(buffer);
+	free(buffer);*/
+
+	system(msg_buf);
+	//system("echo \"haha\" > /home/ben/log.txt");
 }
 
 void loop(void)
