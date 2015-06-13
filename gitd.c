@@ -71,7 +71,8 @@ void loop(void)
 	      	/* printf("dir: %s\n", entry->d_name); */
 		check_less_zero(chdir(entry->d_name));
 		f = popen("/usr/bin/git fetch", "r");
-		check_null(f);
+		sleep(5);
+
 		send_message(f);
 		check_less_zero(pclose(f));
 		check_less_zero(chdir(gitd_directory));
