@@ -51,7 +51,7 @@ void send_message(FILE *f)
 	char *buffer = malloc(sz);
 	check_null(buffer);
 	fread(buffer, 1, sz, f);
-	sprintf(msg_buf, "notify-send \"%s\"", buffer);
+	sprintf(msg_buf, "wall \"%s\"", buffer);
 	system(msg_buf);
 	free(buffer);
 }
