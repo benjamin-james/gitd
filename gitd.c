@@ -42,15 +42,18 @@ int main(int argc, char **argv)
  */
 void send_message(FILE *f)
 {
-	char buffer[80];
 	char msg_buf[100];
-	while (fgets(buffer, sizeof(buffer)-1, f) != NULL) {
-
-		/* search for commit message */
-		sprintf(msg_buf, "/usr/bin/wall \"%s\"", buffer);
-		check_less_zero(system(msg_buf));
+	fseek(f, 0L, SEEK_END);
+	size_t sz = ftell(f);
+	fseek(f, 0L, SEEK_SET);
+	if (sz == 0)
 		return;
-	}
+	char *buffer = malloc(sz);
+	check_null(buffer);
+	fread(buffer, 1, sz, f);
+	sprintf(msg_buf, "notify-send \"%s\"", buffer);
+	system(msg_buf);
+	free(buffer);
 }
 
 void loop(void)
