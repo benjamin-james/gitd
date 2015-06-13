@@ -1,4 +1,4 @@
-CFLAGS = -Wall -ansi -pedantic -g -O2 -D_POSIX_SOURCE
+CFLAGS =-Wall -pedantic -g -O2
 all: gitd
 
 gitd: gitd.c

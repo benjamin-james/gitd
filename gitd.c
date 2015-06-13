@@ -70,8 +70,7 @@ void loop(void)
 			continue;
 	      	/* printf("dir: %s\n", entry->d_name); */
 		check_less_zero(chdir(entry->d_name));
-		f = popen("/usr/bin/git fetch", "r");
-		sleep(5);
+		f = popen("/usr/bin/git fetch 2>&1", "r");
 
 		send_message(f);
 		check_less_zero(pclose(f));
