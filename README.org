@@ -1,5 +1,7 @@
 * gitd
 A way of notifying you when someone else pushes to a git repository
 
-It will read /etc/gitd.conf to see which repositories to monitor, and keep copies of those in /etc/gitd/.
-The daemon will fetch from the remote repositories and check if there is a change. If there is, it will send a Unix Domain Socket, where the client program can listen for the update.
+It will read ~/.gitd/gitd.conf to see which repositories to monitor, and keep copies of those in ~/.gitd/.
+The daemon will fetch from the remote repositories and check if there is a change. If there is, it will send a notification to the user.
+
+
