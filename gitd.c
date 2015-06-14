@@ -47,7 +47,7 @@ void send_message(FILE *f)
 	fseek(f, 0L, SEEK_END);
 	size_t sz = ftell(f);
 	fseek(f, 0L, SEEK_SET);
-	if (sz <= 2) /* some weird characters */
+	if (sz <= 10) /* some weird characters */
 		return;
 	fread(file_buf, 1, sizeof(file_buf), f);
 	sprintf(msg_buf, "echo \"%s\" > %s/log.txt", file_buf, gitd_directory);
