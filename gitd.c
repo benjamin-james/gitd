@@ -49,8 +49,8 @@ int main(int argc, char **argv)
 void send_message(FILE *f)
 {
 	char file_buf[256];
-	while (fgets(file_buf, 256, f) != NULL)
-		printf("it is saying: \"%s\"\n", file_buf);
+	while (fgets(file_buf, sizeof(file_buf), f) != NULL)
+		fprintf(stderr, "it is saying: \"%s\"\n", file_buf);
 }
 
 void loop(void)
