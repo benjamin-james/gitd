@@ -14,8 +14,9 @@
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
 #define SLEEP_TIME 60
+#define PROGRAM "wall"
 
-void send_message(const char *message, ...);
+void send_message(const char *dirname, const char *program);
 void loop(const char *gitd_directory);
 
 int main(int argc, char **argv)
@@ -39,16 +40,11 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-void send_message(const char *message, ...)
+void send_message(const char *dirname, const char *program)
 {
-	char buf[256], sys_buf[256];
-	va_list args;
-	va_start(args, message);
-	vsprintf(buf, message, args);
-	va_end(args);
-
-	sprintf(sys_buf, "echo \'%s\' | wall", buf);
-	check_less_zero(system(sys_buf));
+	char buf[256];
+	sprintf(buf, "printf \"%s %%s\" \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", dirname, program);
+	check_less_zero(system(buf));
 }
 
 void loop(const char *gitd_directory)
@@ -63,11 +59,11 @@ void loop(const char *gitd_directory)
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
 		check_less_zero(chdir(entry->d_name));
-		f = popen("/usr/bin/git fetch 2>&1", "r");
+		f = popen("git fetch 2>&1", "r");
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
 		check_less_zero(pclose(f));
-		send_message("%s updated", entry->d_name);
+		send_message(entry->d_name, PROGRAM);
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
