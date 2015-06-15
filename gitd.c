@@ -2,13 +2,14 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "syslog.h"
 #include "sys/types.h"
 #include "sys/stat.h"
 #include "unistd.h"
 
 #define check_null(A) { \
-		if (A == NULL) \
-			exit(EXIT_FAILURE); }
+		if (A == NULL) { \
+			exit(EXIT_FAILURE); }}
 #define check_less_zero(A) {   \
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
@@ -18,8 +19,11 @@ void loop(void);
 
 char gitd_directory[256];
 
+#define _DEBUG_ 1
+
 int main(int argc, char **argv)
 {
+#ifndef _DEBUG_
 	pid_t sid, pid = fork();
 	check_less_zero(pid);
 	if (pid > 0)
@@ -27,9 +31,10 @@ int main(int argc, char **argv)
 
 	sid = setsid();
 	check_less_zero(sid);
-
+#endif
 	sprintf(gitd_directory, "%s/.gitd/", getenv("HOME"));
-	check_less_zero(chdir(gitd_directory));
+	if (chdir(gitd_directory) < 0)
+		check_less_zero(mkdir(gitd_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH));
 
 	while (1)
 		loop();
@@ -64,7 +69,7 @@ void loop(void)
 	struct stat st;
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
-		FILE *f = NULL;
+		/* FILE *f = NULL; */
 
 		if (!strcmp(entry->d_name, ".."))
 			continue;
@@ -74,10 +79,13 @@ void loop(void)
 			continue;
 	      	/* printf("dir: %s\n", entry->d_name); */
 		check_less_zero(chdir(entry->d_name));
-		f = popen("/usr/bin/git fetch 2>&1", "r");
+		char buf[256];
+		sprintf(buf, "/usr/bin/git fetch 2>&1 > %s/log.txt", getenv("HOME"));
+		system(buf);
+		/*f = popen("/usr/bin/git fetch 2>&1", "r");
 
 		send_message(f);
-		check_less_zero(pclose(f));
+		check_less_zero(pclose(f));*/
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
