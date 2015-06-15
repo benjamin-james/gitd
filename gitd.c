@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 void send_message(const char *program, const char *dirname)
 {
 	char buf[512];
-	sprintf(buf, "printf \"%s %%s\" \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", dirname, program);
+	sprintf(buf, "printf \"%s %%s\" $(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s') | %s", dirname, program);
 	check_less_zero(system(buf));
 }
 
