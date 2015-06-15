@@ -79,7 +79,7 @@ void loop(void)
 		  sprintf(buf, "/usr/bin/git fetch 2>>%s/log.txt", getenv("HOME"));
 		  system(buf);*/
 		dup2(STDOUT_FILENO, STDERR_FILENO);
-		system("/usr/bin/git fetch >log.txt");
+		system("/usr/bin/git fetch 2>log.txt");
 		f = fopen("log.txt", "r");
 		send_message(f);
 		check_less_zero(fclose(f));
