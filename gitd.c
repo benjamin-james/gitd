@@ -33,6 +33,7 @@ int main(int argc, char **argv)
 	check_less_zero(sid);
 #endif
 	sprintf(gitd_directory, "%s/.gitd/", getenv("HOME"));
+	dup2(STDOUT_FILENO, STDERR_FILENO);
 	if (chdir(gitd_directory) < 0)
 		check_less_zero(mkdir(gitd_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH));
 
@@ -47,19 +48,9 @@ int main(int argc, char **argv)
  */
 void send_message(FILE *f)
 {
-	char msg_buf[256];
 	char file_buf[256];
-	fread(file_buf, 1, sizeof(file_buf), f);
-	sprintf(msg_buf, "echo \"%s\" > %s/log_msg.txt", file_buf, gitd_directory);
-/*	char *buffer = malloc(sz);
-	check_null(buffer);
-	fread(buffer, 1, sz, f);
-	sprintf(msg_buf, "wall \"%s\"", buffer);
-	system(msg_buf);
-	free(buffer);*/
-
-	system(msg_buf);
-	//system("echo \"haha\" > /home/ben/log.txt");
+	while (fgets(file_buf, 256, f) != NULL)
+		printf("it is saying: \"%s\"\n", file_buf);
 }
 
 void loop(void)
@@ -78,11 +69,10 @@ void loop(void)
 		/*char buf[256];
 		  sprintf(buf, "/usr/bin/git fetch 2>>%s/log.txt", getenv("HOME"));
 		  system(buf);*/
-		dup2(STDOUT_FILENO, STDERR_FILENO);
-		system("/usr/bin/git fetch 2>log.txt");
-		f = fopen("log.txt", "r");
+
+		f = popen("/usr/bin/git fetch", "r");
 		send_message(f);
-		check_less_zero(fclose(f));
+		check_less_zero(pclose(f));
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
