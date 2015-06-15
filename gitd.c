@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 void send_message(const char *program)
 {
 	char buf[512];
-	sprintf(buf, "printf '%%s %%s' \"$(basename `git rev-parse --show-toplevel`)\" \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", program);
+	sprintf(buf, "printf '%%s %%s' \"$(basename $(dirname $PWD))\" \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", program);
 	check_less_zero(system(buf));
 }
 
