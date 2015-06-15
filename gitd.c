@@ -1,10 +1,10 @@
 #include "dirent.h"
+#include "stdarg.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
-#include "syslog.h"
-#include "sys/types.h"
 #include "sys/stat.h"
+#include "sys/types.h"
 #include "unistd.h"
 
 #define check_null(A) { \
@@ -13,8 +13,9 @@
 #define check_less_zero(A) {   \
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
+#define SLEEP_TIME 60
 
-void send_message(FILE *f, const char *name);
+void send_message(const char *message, ...);
 void loop(const char *gitd_directory);
 
 int main(int argc, char **argv)
@@ -38,20 +39,21 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-/*
- * If we don't need to update, just return
- */
-void send_message(FILE *f, const char *name)
+void send_message(const char *message, ...)
 {
-	char file_buf[256];
-	if (fgets(file_buf, sizeof(file_buf), f) == NULL)
-		return;
-	sprintf(file_buf, "echo \'\"%s\" is updated\' | wall", name);
-	system(file_buf);
+	char buf[256], sys_buf[256];
+	va_list args;
+	va_start(args, message);
+	vsprintf(buf, message, args);
+	va_end(args);
+
+	sprintf(sys_buf, "echo \'%s\' | wall", buf);
+	system(sys_buf);
 }
 
 void loop(const char *gitd_directory)
 {
+	char file_buf[256];
 	DIR *cwd = opendir(".");
 	struct dirent *entry = NULL;
 	struct stat st;
@@ -62,10 +64,12 @@ void loop(const char *gitd_directory)
 			continue;
 		check_less_zero(chdir(entry->d_name));
 		f = popen("/usr/bin/git fetch 2>&1", "r");
-		send_message(f, entry->d_name);
+		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
+			continue;
 		check_less_zero(pclose(f));
+		send_message("%s updated", entry->d_name);
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
-	sleep(60);
+	sleep(SLEEP_TIME);
 }
