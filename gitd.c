@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-void send_message(const char *dirname, const char *program)
+void send_message(const char *program, const char *dirname)
 {
 	char buf[512];
 	sprintf(buf, "printf \"%s %%s\" \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", dirname, program);
@@ -56,16 +56,14 @@ void loop(const char *gitd_directory)
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
 		FILE *f = NULL;
-		char copy[256];
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
-		strcpy(copy, entry->d_name);
-		check_less_zero(chdir(copy));
+		check_less_zero(chdir(entry->d_name));
 		f = popen("git fetch 2>&1", "r");
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
 		check_less_zero(pclose(f));
-		send_message(entry->d_name, PROGRAM);
+		send_message(PROGRAM, entry->d_name);
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
