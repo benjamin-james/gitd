@@ -8,37 +8,35 @@
 #include "unistd.h"
 
 #define check_null(A) { \
-		if (A == NULL) { \
-			exit(EXIT_FAILURE); }}
+		if (A == NULL) \
+			exit(EXIT_FAILURE); }
 #define check_less_zero(A) {   \
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
 
 void send_message(FILE *f, const char *name);
-void loop(void);
-
-char gitd_directory[256];
-
-#define _DEBUG_ 1
+void loop(const char *gitd_directory);
 
 int main(int argc, char **argv)
 {
-//#ifndef _DEBUG_
 	pid_t sid, pid = fork();
+	char gitd_directory[256];
 	check_less_zero(pid);
 	if (pid > 0)
 		exit(EXIT_SUCCESS);
 
 	sid = setsid();
 	check_less_zero(sid);
-//#endif
 	sprintf(gitd_directory, "%s/.gitd/", getenv("HOME"));
-	dup2(STDOUT_FILENO, STDERR_FILENO);
+
+	fclose(stdout);
+	fclose(stderr);
+	fclose(stdin);
 	if (chdir(gitd_directory) < 0)
 		check_less_zero(mkdir(gitd_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH));
 
 	while (1)
-		loop();
+		loop(gitd_directory);
 
 	exit(EXIT_SUCCESS);
 }
@@ -49,16 +47,13 @@ int main(int argc, char **argv)
 void send_message(FILE *f, const char *name)
 {
 	char file_buf[256];
-	int updated = 0;
-	while (fgets(file_buf, sizeof(file_buf), f) != NULL)
-		updated = 1;
-	if (updated == 0)
+	if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 		return;
 	sprintf(file_buf, "echo \'\"%s\" is updated\' | wall", name);
 	system(file_buf);
 }
 
-void loop(void)
+void loop(const char *gitd_directory)
 {
 	DIR *cwd = opendir(".");
 	struct dirent *entry = NULL;
@@ -66,10 +61,8 @@ void loop(void)
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
 		FILE *f = NULL;
-
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
-	      	/* printf("dir: %s\n", entry->d_name); */
 		check_less_zero(chdir(entry->d_name));
 		f = popen("/usr/bin/git fetch 2>&1", "r");
 		send_message(f, entry->d_name);
