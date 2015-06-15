@@ -69,19 +69,20 @@ void loop(void)
 	struct stat st;
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
-		/* FILE *f = NULL; */
+		FILE *f = NULL;
 
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
 	      	/* printf("dir: %s\n", entry->d_name); */
 		check_less_zero(chdir(entry->d_name));
-		char buf[256];
-		sprintf(buf, "/usr/bin/git fetch 2>>%s/log.txt", getenv("HOME"));
-		system(buf);
-		/*f = popen("/usr/bin/git fetch 2>&1", "r");
+		/*char buf[256];
+		  sprintf(buf, "/usr/bin/git fetch 2>>%s/log.txt", getenv("HOME"));
+		  system(buf);*/
+		dup2(STDOUT_FILENO, STDERR_FILENO);
+		f = popen("/usr/bin/git fetch", "r");
 
 		send_message(f);
-		check_less_zero(pclose(f));*/
+		check_less_zero(pclose(f));
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
