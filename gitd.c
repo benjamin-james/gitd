@@ -67,5 +67,5 @@ void loop(const char *gitd_directory)
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
-	sleep(30);
+	sleep(60);
 }
