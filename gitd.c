@@ -70,7 +70,7 @@ void loop(void)
 		  sprintf(buf, "/usr/bin/git fetch 2>>%s/log.txt", getenv("HOME"));
 		  system(buf);*/
 
-		f = popen("/usr/bin/git fetch", "r");
+		f = popen("/usr/bin/git fetch 2&>1", "r");
 		send_message(f);
 		check_less_zero(pclose(f));
 		check_less_zero(chdir(gitd_directory));
