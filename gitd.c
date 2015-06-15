@@ -29,9 +29,6 @@ int main(int argc, char **argv)
 	check_less_zero(sid);
 	sprintf(gitd_directory, "%s/.gitd/", getenv("HOME"));
 
-	fclose(stdout);
-	fclose(stderr);
-	fclose(stdin);
 	if (chdir(gitd_directory) < 0)
 		check_less_zero(mkdir(gitd_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH));
 
