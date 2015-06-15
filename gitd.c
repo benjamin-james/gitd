@@ -71,16 +71,12 @@ void loop(void)
         for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
 		/* FILE *f = NULL; */
 
-		if (!strcmp(entry->d_name, ".."))
-			continue;
-		if (!strcmp(entry->d_name, "."))
-			continue;
-		if (stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
+		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
 	      	/* printf("dir: %s\n", entry->d_name); */
 		check_less_zero(chdir(entry->d_name));
 		char buf[256];
-		sprintf(buf, "/usr/bin/git fetch 2>&1 > %s/log.txt", getenv("HOME"));
+		sprintf(buf, "/usr/bin/git fetch > %s/log.txt", getenv("HOME"));
 		system(buf);
 		/*f = popen("/usr/bin/git fetch 2>&1", "r");
 
