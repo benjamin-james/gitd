@@ -56,17 +56,15 @@ void loop(const char *gitd_directory)
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
 		FILE *f = NULL;
-		char cpy[256];
-		strcpy(cpy, entry->d_name);
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
 		check_less_zero(chdir(entry->d_name));
 		f = popen("git fetch 2>&1", "r");
+		check_less_zero(chdir(".."));
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
 		check_less_zero(pclose(f));
-		sprintf(file_buf, "%s", entry->d_name);
-		send_message(PROGRAM, cpy);
+		send_message(PROGRAM, entry->d_name);
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
