@@ -66,11 +66,7 @@ void loop(void)
 			continue;
 	      	/* printf("dir: %s\n", entry->d_name); */
 		check_less_zero(chdir(entry->d_name));
-		/*char buf[256];
-		  sprintf(buf, "/usr/bin/git fetch 2>>%s/log.txt", getenv("HOME"));
-		  system(buf);*/
-
-		f = popen("/usr/bin/git fetch 2&>1", "r");
+		f = popen("/usr/bin/git fetch 2>&1", "r");
 		send_message(f);
 		check_less_zero(pclose(f));
 		check_less_zero(chdir(gitd_directory));
