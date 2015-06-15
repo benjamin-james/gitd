@@ -48,7 +48,7 @@ void send_message(const char *message, ...)
 	va_end(args);
 
 	sprintf(sys_buf, "echo \'%s\' | wall", buf);
-	system(sys_buf);
+	check_less_zero(system(sys_buf));
 }
 
 void loop(const char *gitd_directory)
