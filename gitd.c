@@ -16,7 +16,7 @@
 #define SLEEP_TIME 60
 #define PROGRAM "wall"
 
-void send_message(const char *dirname, const char *program);
+void send_message(const char *program);
 void loop(const char *gitd_directory);
 
 int main(int argc, char **argv)
@@ -40,10 +40,10 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-void send_message(const char *program, const char *dirname)
+void send_message(const char *program)
 {
 	char buf[512];
-	sprintf(buf, "printf '%s %%s' \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", dirname, program);
+	sprintf(buf, "printf '%%s %%s' \"$(basename `git rev-parse --show-toplevel`)\" \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", program);
 	check_less_zero(system(buf));
 }
 
@@ -56,8 +56,6 @@ void loop(const char *gitd_directory)
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
 		FILE *f = NULL;
-		char cpy[256];
-		memcpy(cpy, entry->d_name, strlen(entry->d_name));
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
 		check_less_zero(chdir(entry->d_name));
@@ -65,7 +63,7 @@ void loop(const char *gitd_directory)
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
 		check_less_zero(pclose(f));
-		send_message(PROGRAM, cpy);
+		send_message(PROGRAM);
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
