@@ -23,7 +23,7 @@ char gitd_directory[256];
 
 int main(int argc, char **argv)
 {
-#ifndef _DEBUG_
+//#ifndef _DEBUG_
 	pid_t sid, pid = fork();
 	check_less_zero(pid);
 	if (pid > 0)
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
 	sid = setsid();
 	check_less_zero(sid);
-#endif
+//#endif
 	sprintf(gitd_directory, "%s/.gitd/", getenv("HOME"));
 	dup2(STDOUT_FILENO, STDERR_FILENO);
 	if (chdir(gitd_directory) < 0)
@@ -52,7 +52,9 @@ void send_message(FILE *f, const char *name)
 	int updated = 0;
 	while (fgets(file_buf, sizeof(file_buf), f) != NULL)
 		updated = 1;
-	sprintf(file_buf, "wall \'%s is updated!\'", name);
+	if (updated == 0)
+		return;
+	sprintf(file_buf, "echo \'\"%s\" is updated\' | wall", name);
 	system(file_buf);
 }
 
