@@ -65,7 +65,7 @@ void loop(const char *gitd_directory)
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
 		check_less_zero(pclose(f));
-		send_message(git_dir, PROGRAM);
+		send_message(entry->d_name, PROGRAM);
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
