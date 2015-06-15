@@ -50,17 +50,17 @@ void send_message(const char *dirname, const char *program)
 void loop(const char *gitd_directory)
 {
 	char file_buf[256];
-	char git_dir[256];
 	DIR *cwd = opendir(".");
 	struct dirent *entry = NULL;
 	struct stat st;
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
 		FILE *f = NULL;
+		char copy[256];
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
-		strcpy(git_dir, entry->d_name);
-		check_less_zero(chdir(git_dir));
+		strcpy(copy, entry->d_name);
+		check_less_zero(chdir(copy));
 		f = popen("git fetch 2>&1", "r");
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
