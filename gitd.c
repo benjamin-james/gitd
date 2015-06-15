@@ -14,7 +14,7 @@
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
 
-void send_message(FILE *f);
+void send_message(FILE *f, const char *name);
 void loop(void);
 
 char gitd_directory[256];
@@ -46,11 +46,14 @@ int main(int argc, char **argv)
 /*
  * If we don't need to update, just return
  */
-void send_message(FILE *f)
+void send_message(FILE *f, const char *name)
 {
 	char file_buf[256];
+	int updated = 0;
 	while (fgets(file_buf, sizeof(file_buf), f) != NULL)
-		fprintf(stderr, "it is saying: \"%s\"\n", file_buf);
+		updated = 1;
+	sprintf(file_buf, "wall \'%s is updated!\'", name);
+	system(file_buf);
 }
 
 void loop(void)
@@ -67,7 +70,7 @@ void loop(void)
 	      	/* printf("dir: %s\n", entry->d_name); */
 		check_less_zero(chdir(entry->d_name));
 		f = popen("/usr/bin/git fetch 2>&1", "r");
-		send_message(f);
+		send_message(f, entry->d_name);
 		check_less_zero(pclose(f));
 		check_less_zero(chdir(gitd_directory));
 	}
