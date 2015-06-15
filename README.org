@@ -2,5 +2,24 @@
 A way of notifying you when someone else pushes to a git repository
 
 It will read ~/.gitd/'s subdirectories to see which repositories to monitor.
+
 You can symlink directories to inside ~/.gitd so it will fetch to those automatically.
+
 The daemon will fetch from the remote repositories and check if there is a change. If there is, it will send a notification to the user.
+
+It is a forking daemon, so you don't need to do too much to set it up.
+* systemd
+Put this into "~/.config/systemd/user/gitd.service":
+#+BEGIN_SRC
+[Unit]
+Description=Gitd: A way of notifying you about git updates
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/gitd
+ExecStop=/usr/bin/pkill gitd
+Restart=always
+
+[Install]
+WantedBy=default.target
+#+END_SRC
