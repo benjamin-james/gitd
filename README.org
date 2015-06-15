@@ -2,4 +2,5 @@
 A way of notifying you when someone else pushes to a git repository
 
 It will read ~/.gitd/'s subdirectories to see which repositories to monitor.
+You can symlink directories to inside ~/.gitd so it will fetch to those automatically.
 The daemon will fetch from the remote repositories and check if there is a change. If there is, it will send a notification to the user.
