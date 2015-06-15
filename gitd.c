@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 
 void send_message(const char *dirname, const char *program)
 {
-	char buf[256];
+	char buf[512];
 	sprintf(buf, "printf \"%s %%s\" \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", dirname, program);
 	check_less_zero(system(buf));
 }
@@ -50,6 +50,7 @@ void send_message(const char *dirname, const char *program)
 void loop(const char *gitd_directory)
 {
 	char file_buf[256];
+	char git_dir[256];
 	DIR *cwd = opendir(".");
 	struct dirent *entry = NULL;
 	struct stat st;
@@ -58,12 +59,13 @@ void loop(const char *gitd_directory)
 		FILE *f = NULL;
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
-		check_less_zero(chdir(entry->d_name));
+		strcpy(git_dir, entry->d_name);
+		check_less_zero(chdir(git_dir));
 		f = popen("git fetch 2>&1", "r");
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
 		check_less_zero(pclose(f));
-		send_message(entry->d_name, PROGRAM);
+		send_message(git_dir, PROGRAM);
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
