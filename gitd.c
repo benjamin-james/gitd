@@ -14,6 +14,11 @@
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
 #define SLEEP_TIME 60
+/*
+ * SEND for now uses notify-send,
+ * which takes two arguments, the
+ * title and the message.
+ */
 #define SEND "notify-send \"$(basename $(dirname $PWD))\" \"$(git log -n 1 --pretty=format:'%d%n%an%n%s')\""
 
 void loop(const char *gitd_directory);
