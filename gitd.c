@@ -18,6 +18,7 @@
 #define SLEEP_TIME 60
 
 void loop(const char *gitd_directory);
+void send_command(void);
 void get_output(const char *command, char *ptr);
 
 int main(int argc, char **argv)
@@ -41,10 +42,20 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
+void send_command(void)
+{
+	char title[256];
+	char body[256];
+	char message[256];
+	get_output("basename $(dirname $PWD)", title);
+	get_output("git log -n 1 --pretty=format:'%d%n%an%n%s'", body);
+	sprintf(message, "notify-send \"%s\" \"%s\"", title, body);
+	system(message);
+}
+
 void loop(const char *gitd_directory)
 {
 	char file_buf[256];
-	char title[64];
 	DIR *cwd = opendir(".");
 	struct dirent *entry = NULL;
 	struct stat st;
@@ -58,9 +69,7 @@ void loop(const char *gitd_directory)
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
 		check_less_zero(pclose(f));
-		get_output("basename $(dirname $PWD)", title);
-		get_output("git log -n 1 --pretty=format:'%d%n%an%n%s'", file_buf);
-		check_less_zero(SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, title, file_buf, NULL));
+		send_command();
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
