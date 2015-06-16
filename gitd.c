@@ -16,7 +16,6 @@
 #define SLEEP_TIME 60
 #define SEND "notify-send \"$(basename $(dirname $PWD))\" \"$(git log -n 1 --pretty=format:'%d%n%an%n%s')\""
 
-void send_message(void);
 void loop(const char *gitd_directory);
 
 int main(int argc, char **argv)
