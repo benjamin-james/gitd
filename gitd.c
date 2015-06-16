@@ -14,9 +14,9 @@
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
 #define SLEEP_TIME 60
-#define PROGRAM "wall"
+#define SEND "notify-send \"$(basename $(dirname $PWD))\" \"$(git log -n 1 --pretty=format:'%d%n%an%n%s')\""
 
-void send_message(const char *program);
+void send_message(void);
 void loop(const char *gitd_directory);
 
 int main(int argc, char **argv)
@@ -40,13 +40,6 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-void send_message(const char *program)
-{
-	char buf[512];
-	sprintf(buf, "printf '%%s %%s' \"$(basename $(dirname $PWD))\" \"$(git log -n 1 --pretty=format:'%%d%%n%%an%%n%%s')\" | %s", program);
-	check_less_zero(system(buf));
-}
-
 void loop(const char *gitd_directory)
 {
 	char file_buf[256];
@@ -63,7 +56,7 @@ void loop(const char *gitd_directory)
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 			continue;
 		check_less_zero(pclose(f));
-		send_message(PROGRAM);
+		check_less_zero(system(SEND));
 		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
