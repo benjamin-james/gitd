@@ -1,9 +1,9 @@
 * gitd
-A way of notifying you when someone else pushes to a git repository
+A way of notifying you of git commits
 
-It will read ~/.gitd/'s subdirectories to see which repositories to monitor.
+It will read subdirectories (specified in the configuration file) to see which repositories to monitor.
 
-You can symlink directories inside ~/.gitd so it will fetch to those automatically.
+You can symlink directories inside the gitd directory so it will fetch to those automatically.
 
 The daemon will fetch from the remote repositories and check if there is a change.
 
@@ -11,10 +11,11 @@ If there is, it will send a notification to the user.
 
 It is a forking daemon, so you don't need to do too much to set it up.
 
-Type 'make' and 'sudo make install' to install it in /usr/local/bin/.
+The configuration is in //etc/gitd/gitd.conf by default.
 
+Type 'make' and 'sudo make install' to install it in //usr/local/bin/.
 * systemd
-Put this into "~/.config/systemd/user/gitd.service":
+Put this into "/usr/lib/systemd/system/gitd.service":
 #+BEGIN_SRC
 [Unit]
 Description=Gitd: A way of notifying you about git updates
@@ -30,8 +31,8 @@ WantedBy=default.target
 #+END_SRC
 And then tell systemd about it:
 #+BEGIN_SRC bash
-systemctl enable --user gitd.service
-systemctl start --user gitd.service
+sudo systemctl enable gitd.service
+sudo systemctl start gitd.service
 #+END_SRC
 * Others
 Put it in your ~/.bashrc
