@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "syslog.h"
 #include "sys/stat.h"
 #include "sys/types.h"
 #include "unistd.h"
@@ -29,10 +30,13 @@ int main(int argc, char **argv)
 	sid = setsid();
 	check_less_zero(sid);
 
+	openlog(*argv, LOG_PID, LOG_USER);
+
 	if (argc < 2)
 		load_config("/etc/gitd/gitd.conf");
 	else
 		load_config(argv[1]);
+	syslog(LOG_DEBUG, "Loaded config");
 	while (1)
 		loop(git_dir);
 	exit(EXIT_SUCCESS);
@@ -44,19 +48,23 @@ void loop(const char *gitd_directory)
 	DIR *cwd = opendir(gitd_directory);
 	struct dirent *entry = NULL;
 	struct stat st;
+	syslog(LOG_DEBUG, "in loop");
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; chdir(git_dir), entry = readdir(cwd)) {
 		FILE *f = NULL;
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
 		check_less_zero(chdir(entry->d_name));
+		syslog(LOG_DEBUG, "Fetching directory %s", entry->d_name);
 		f = popen("git fetch 2>&1", "r");
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
 		        continue;
 		check_less_zero(pclose(f));
+		syslog(LOG_DEBUG, "Notifying user with %s", notify_command);
 		system(notify_command);
 	}
 	closedir(cwd);
+	syslog(LOG_DEBUG, "Sleeping");
 	sleep(sleep_secs);
 }
 void replace_str(char *str, char *original, char *tok)
