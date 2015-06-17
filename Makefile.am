@@ -9,4 +9,4 @@ dist_man_MANS = gitd.8
 dist_sysconf_DATA = gitd.conf
 
 install-data-local:
-	$(MKDIR_P) ${pkgdatadir}
+	$(MKDIR_P) ${DESTDIR}/${pkgdatadir}
