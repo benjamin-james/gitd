@@ -1,0 +1,11 @@
+[Unit]
+Description=gitd: A way of notifying you of git commits
+
+[Service]
+Type=forking
+ExecStart=@prefix@/bin/gitd
+ExecStop=/usr/bin/pkill gitd
+Restart=always
+
+[Install]
+WantedBy=default.target

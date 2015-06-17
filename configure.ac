@@ -9,7 +9,9 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
 GITD_DIR_SUB="${prefix}/share/${PACKAGE_NAME}"
 AC_SUBST(GITD_DIR_SUB)
-AC_CONFIG_FILES(gitd.conf)
+AC_CONFIG_FILES([gitd.conf])
+AC_SUBST(prefix)
+AC_CONFIG_FILES([gitd.service])
 
 # Checks for programs.
 AC_PROG_CC
