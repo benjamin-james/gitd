@@ -18,7 +18,7 @@ Type './autogen.sh', './configure', 'make' and 'sudo make install' to install it
 Put this into "~/.config/systemd/user/gitd.service":
 #+BEGIN_SRC
 [Unit]
-Description=Gitd: A way of notifying you about git updates
+Description=Gitd: A way of notifying you of git commits
 
 [Service]
 Type=forking
