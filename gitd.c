@@ -14,8 +14,6 @@
 #define check_less_zero(A) {   \
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
-#define Q(x) #x
-#define CONFDIR Q(CONFIGDIR)
 int sleep_secs;
 char git_dir[256];
 char notify_command[256];
