@@ -4,11 +4,11 @@ all: gitd
 gitd: gitd.c
 	cc $(CFLAGS) gitd.c -o gitd
 install: gitd
-	cp gitd /usr/local/bin
+	cp gitd /usr/bin
 	test -d /usr/share/gitd || mkdir /usr/share/gitd
 	test -d /etc/gitd || mkdir /etc/gitd
-	cp gitd.conf /etc/gitd/gitd.conf
-	cp gitd.man /usr/local/man/man1/gitd.1
-	gzip /usr/local/man/man1/gitd.1
+	cp default.conf /etc/gitd/gitd.conf
+	cp gitd.8 /usr/share/man/man8/gitd.8
+	gzip /usr/share/man/man8/gitd.8
 clean:
 	rm gitd

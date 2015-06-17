@@ -1,0 +1,17 @@
+.\" Manpage for gitd
+.\" Contact benjamin-james@utulsa.edu for errors, etc
+.TH gitd 8 "17 June 2015" "0.3.0" "gitd man page"
+.SH NAME
+gitd \- git commit daemon
+.SH SYNOPSIS
+gitd [alternate config file]
+.SH DESCRIPTION
+gitd is a daemon that notifies you of git commits through a user defined notification
+.SH OPTIONS
+gitd has an option to load an alternate config file, although it shouldn't be specified, although it loads its configuration regularly from /etc/gitd/gitd.conf.
+.SH SEE ALSO
+git(1) systemctl(1), fork(2), system(3)
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Benjamin James (benjamin-james@utulsa.edu)
