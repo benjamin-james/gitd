@@ -14,6 +14,8 @@
 #define check_less_zero(A) {   \
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
+#define Q(x) #x
+#define CONFDIR Q(CONFIGDIR)
 int sleep_secs;
 char git_dir[256];
 char notify_command[256];
@@ -33,7 +35,7 @@ int main(int argc, char **argv)
 	openlog(*argv, LOG_PID, LOG_USER);
 
 	if (argc < 2)
-		load_config("/etc/gitd/gitd.conf");
+		load_config(CONFDIR "/gitd.conf");
 	else
 		load_config(argv[1]);
 	syslog(LOG_DEBUG, "Loaded config");
