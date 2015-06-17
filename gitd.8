@@ -4,11 +4,13 @@
 .SH NAME
 gitd \- git commit daemon
 .SH SYNOPSIS
-gitd [alternate config file]
+gitd
 .SH DESCRIPTION
 gitd is a daemon that notifies you of git commits through a user defined notification
+gitd keeps its repository data in /usr/share/gitd/, so you can put directories there (even while it is running)
+You can also symlink git repositories to /usr/share/gitd/ to automatically fetch for those.
 .SH OPTIONS
-gitd has an option to load an alternate config file, although it shouldn't be specified, although it loads its configuration regularly from /etc/gitd/gitd.conf.
+gitd does not accept options, although it loads its configuration from /etc/gitd/gitd.conf.
 .SH SEE ALSO
 git(1) systemctl(1), fork(2), system(3)
 .SH BUGS

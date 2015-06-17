@@ -33,12 +33,9 @@ int main(int argc, char **argv)
 	check_less_zero(sid);
 
 	openlog(*argv, LOG_PID, LOG_USER);
-
-	if (argc < 2)
-		load_config(CONFDIR "/gitd.conf");
-	else
-		load_config(argv[1]);
+	load_config(CONFDIR "/gitd.conf");
 	syslog(LOG_DEBUG, "Loaded config");
+
 	while (1)
 		loop(git_dir);
 	exit(EXIT_SUCCESS);

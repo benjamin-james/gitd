@@ -11,9 +11,9 @@ If there is, it will send a notification to the user.
 
 It is a forking daemon, so you don't need to do too much to set it up.
 
-The configuration is in //etc/gitd/gitd.conf by default.
+The configuration should usually install to "/etc/gitd/gitd.conf".
 
-Type 'make' and 'sudo make install' to install it in //usr/local/bin/.
+Type './autogen.sh', './configure', 'make' and 'sudo make install' to install it in "/usr/local/bin/" and the configuration file to "/usr/local/etc/".
 * systemd
 Put this into "/usr/lib/systemd/system/gitd.service":
 #+BEGIN_SRC
@@ -22,7 +22,7 @@ Description=Gitd: A way of notifying you about git updates
 
 [Service]
 Type=forking
-ExecStart=/usr/local/bin/gitd
+ExecStart=/usr/bin/gitd
 ExecStop=/usr/bin/pkill gitd
 Restart=always
 
