@@ -45,17 +45,16 @@ void loop(const char *gitd_directory)
 	struct dirent *entry = NULL;
 	struct stat st;
 	check_null(cwd);
-        for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
+        for (entry = readdir(cwd); entry != NULL; chdir(git_dir), entry = readdir(cwd)) {
 		FILE *f = NULL;
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
 		check_less_zero(chdir(entry->d_name));
 		f = popen("git fetch 2>&1", "r");
 		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
-			continue;
+		        continue;
 		check_less_zero(pclose(f));
 		system(notify_command);
-		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
 	sleep(sleep_secs);
