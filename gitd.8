@@ -9,10 +9,36 @@ gitd
 gitd is a daemon that notifies you of git commits through a user defined notification
 gitd keeps its repository data in /usr/share/gitd/, so you can put directories there (even while it is running)
 You can also symlink git repositories to /usr/share/gitd/ to automatically fetch for those.
+
+gitd was designed to be used with systemd, although it should work fine without it.
+To enable and start gitd, type
+
+systemctl enable gitd.service
+systemctl start gitd.service
+
+to initialize it. Normally, systemd also receives all syslog(3) calls, so one can type
+
+systemctl status gitd.service
+
+to check it.
+
+In /etc/gitd/gitd.conf, there are several options which have commented help above them by default.
+Please keep the entries in the same relative order, especially for the fill-in title and body text.
+Notify - The command that is called to notify the user. notify-send is the default.
+Gitdir - The place where git repositories are stored, /usr/share/gitd by default.
+Sleep - The amount of time in seconds gitd sleeps after checking the repositories.
+Title - what will be filled in for %T in Notify
+Body - what will be filled in for %B in Notify
+
+If you change /etc/gitd/gitd.conf and wish for gitd to see the changes, type
+
+systemctl restart gitd.service
+
+to restart the daemon, reloading /etc/gitd/gitd.conf.
 .SH OPTIONS
 gitd does not accept options, although it loads its configuration from /etc/gitd/gitd.conf.
 .SH SEE ALSO
-git(1) systemctl(1), fork(2), system(3)
+git(1), systemctl(1), fork(2), system(3), syslog(3)
 .SH BUGS
 No known bugs.
 .SH AUTHOR

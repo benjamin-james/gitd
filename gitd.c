@@ -41,13 +41,13 @@ int main(int argc, char **argv)
 void loop(const char *gitd_directory)
 {
 	char file_buf[256];
-	chdir(gitd_directory);
+	int er = chdir(gitd_directory);
 	DIR *cwd = opendir(gitd_directory);
 	struct dirent *entry = NULL;
 	struct stat st;
 	syslog(LOG_DEBUG, "in loop");
 	check_null(cwd);
-        for (entry = readdir(cwd); entry != NULL; chdir(git_dir), entry = readdir(cwd)) {
+        for (entry = readdir(cwd); entry != NULL; er = chdir(git_dir), entry = readdir(cwd)) {
 		FILE *f = NULL;
 		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
 			continue;
@@ -58,7 +58,8 @@ void loop(const char *gitd_directory)
 		        continue;
 		check_less_zero(pclose(f));
 		syslog(LOG_DEBUG, "Notifying user with %s", notify_command);
-		system(notify_command);
+		er = system(notify_command);
+		check_less_zero(er);			
 	}
 	closedir(cwd);
 	syslog(LOG_DEBUG, "Sleeping");

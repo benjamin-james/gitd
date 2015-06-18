@@ -15,24 +15,6 @@ The configuration should usually install to "/etc/gitd/gitd.conf".
 
 Type './autogen.sh', './configure', 'make' and 'sudo make install' to install it in "/usr/local/bin/" and the configuration file to "/usr/local/etc/".
 * systemd
-Put this into "~/.config/systemd/user/gitd.service":
-#+BEGIN_SRC
-[Unit]
-Description=Gitd: A way of notifying you of git commits
-
-[Service]
-Type=forking
-ExecStart=/usr/bin/gitd
-ExecStop=/usr/bin/pkill gitd
-Restart=always
-
-[Install]
-WantedBy=default.target
-#+END_SRC
-And then tell systemd about it:
-#+BEGIN_SRC bash
-systemctl enable --user gitd.service
-systemctl start --user gitd.service
-#+END_SRC
+Copy gitd.service to /usr/lib/systemd/system/gitd.service
 * Others
-Put it in your ~/.bash_profile to start it at user login
+Put 'gitd' in your ~/.bash_profile to start it at user login
