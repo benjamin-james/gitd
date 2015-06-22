@@ -14,31 +14,51 @@
 #define check_less_zero(A) {   \
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
-int sleep_secs;
-char git_dir[256];
-char notify_command[256];
-void loop(const char *gitd_directory);
-int load_config(const char *path);
+void loop(const char *gitd_directory, const char *notify_command);
+int load_config(const char *location, char *notify_command, char *git_dir, int sleep_secs);
 
 int main(int argc, char **argv)
 {
-	pid_t sid, pid = fork();
-	check_less_zero(pid);
-	if (pid > 0)
-		exit(EXIT_SUCCESS);
-
-	sid = setsid();
-	check_less_zero(sid);
-
-	openlog(*argv, LOG_PID, LOG_USER);
-	load_config(CONFDIR "/gitd.conf");
+	pid_t sid, pid;
+	int sleep_secs, forking = 1;
+	char notify_command[256], git_dir[256];
+	if (argc > 1 && !strcmp(argv[1], "--nofork"))
+		forking = 0;
+	if (forking) {
+		pid = fork();
+		check_less_zero(pid);
+		if (pid > 0)
+			exit(EXIT_SUCCESS);
+		sid = setsid();
+		check_less_zero(sid);
+	}
+	openlog(*argv, LOG_PID, LOG_DAEMON);
+	load_config(CONFDIR "/gitd.conf", notify_command, git_dir, sleep_secs);
 	syslog(LOG_DEBUG, "Loaded config");
 
-	while (1)
+	while (1) {
 		loop(git_dir);
+		sleep(sleep_secs);
+	}
 	exit(EXIT_SUCCESS);
 }
-void loop(const char *gitd_directory)
+
+int is_git_directory(const char *path)
+{
+}
+
+int is_updated(void)
+{
+}
+int notify(const char *command)
+{
+}
+/*
+ * Reads the git directory, checks for updates via 'git fetch', and
+ * parses output to determine if an update has occured. If it has,
+ * it executes the notify_command.
+ */
+void loop(const char *gitd_directory, const char *notify_command)
 {
 	char file_buf[256];
 	int er = chdir(gitd_directory);
@@ -59,11 +79,10 @@ void loop(const char *gitd_directory)
 		check_less_zero(pclose(f));
 		syslog(LOG_DEBUG, "Notifying user with %s", notify_command);
 		er = system(notify_command);
-		check_less_zero(er);			
+		check_less_zero(er);
 	}
 	closedir(cwd);
 	syslog(LOG_DEBUG, "Sleeping");
-	sleep(sleep_secs);
 }
 void replace_str(char *str, char *original, char *tok)
 {
@@ -77,7 +96,7 @@ void replace_str(char *str, char *original, char *tok)
 	sprintf(buffer + (p - str), "%s%s", token, p + strlen(original));
 	strcpy(str, buffer);
 }
-int load_config(const char *location)
+int load_config(const char *location, char *notify_command, char *git_dir, int sleep_secs)
 {
         FILE *f = fopen(location, "r");
 	char *key, *token, buffer[256];
