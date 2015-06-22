@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([gitd], [0.3.0], [benjamin-james@utulsa.edu])
+AC_INIT([gitd], [0.4.0], [benjamin-james@utulsa.edu])
 AC_CONFIG_SRCDIR([gitd.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])

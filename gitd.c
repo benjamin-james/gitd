@@ -20,7 +20,7 @@ int load_config(const char *location, char *notify_command, char *git_dir, int s
 int main(int argc, char **argv)
 {
 	pid_t sid, pid;
-	int sleep_secs, forking = 1;
+	int sleep_secs = 60, forking = 1;
 	char notify_command[256], git_dir[256];
 	if (argc > 1 && !strcmp(argv[1], "--nofork"))
 		forking = 0;
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 	syslog(LOG_DEBUG, "Loaded config");
 
 	while (1) {
-		loop(git_dir);
+		loop(git_dir, notify_command);
 		sleep(sleep_secs);
 	}
 	exit(EXIT_SUCCESS);
@@ -98,7 +98,7 @@ void loop(const char *gitd_directory, const char *notify_command)
 		check_less_zero(chdir(entry->d_name));
 		if (is_updated())
 			check_less_zero(notify(notify_command));
-		check_less_zero(chdir(git_dir));
+		check_less_zero(chdir(gitd_directory));
 	}
 	closedir(cwd);
 	syslog(LOG_DEBUG, "Sleeping");
