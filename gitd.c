@@ -43,15 +43,42 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
+/*
+ * self explanatory
+ */
 int is_git_directory(const char *path)
 {
+	struct stat st;
+	if (!strcmp(path, "..") || !strcmp(path, "."))
+		return 0;
+	if (stat(path, &st) != 0 || !(S_ISDIR(st.st_mode)))
+		return 0;
+	return 1;
 }
 
+/*
+ * Checks if the git repository we are in
+ * has updated remotely with "git fetch"
+ */
 int is_updated(void)
 {
+	int upd = 0;
+	char file_buf[256];
+	FILE *f = popen("git fetch 2>&1", "r");
+	if (fgets(file_buf, sizeof(file_buf), f))
+		upd = 1;
+	check_less_zero(pclose(f));
+	return upd;
 }
-int notify(const char *command)
+/*
+ * self explanatory
+ */
+int notify(const char *notify_command)
 {
+	int er = 0;
+	syslog(LOG_DEBUG, "Notifying user with %s", notify_command);
+	er = system(notify_command);
+	return er;
 }
 /*
  * Reads the git directory, checks for updates via 'git fetch', and
@@ -60,26 +87,17 @@ int notify(const char *command)
  */
 void loop(const char *gitd_directory, const char *notify_command)
 {
-	char file_buf[256];
 	int er = chdir(gitd_directory);
 	DIR *cwd = opendir(gitd_directory);
 	struct dirent *entry = NULL;
-	struct stat st;
 	syslog(LOG_DEBUG, "in loop");
 	check_null(cwd);
         for (entry = readdir(cwd); entry != NULL; er = chdir(git_dir), entry = readdir(cwd)) {
-		FILE *f = NULL;
-		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, ".") || stat(entry->d_name, &st) != 0 || !(S_ISDIR(st.st_mode)))
+		if (is_git_directory(entry->d_name) == 0)
 			continue;
 		check_less_zero(chdir(entry->d_name));
-		syslog(LOG_DEBUG, "Fetching directory %s", entry->d_name);
-		f = popen("git fetch 2>&1", "r");
-		if (fgets(file_buf, sizeof(file_buf), f) == NULL)
-		        continue;
-		check_less_zero(pclose(f));
-		syslog(LOG_DEBUG, "Notifying user with %s", notify_command);
-		er = system(notify_command);
-		check_less_zero(er);
+		if (is_updated())
+			check_less_zero(notify(notify_command));
 	}
 	closedir(cwd);
 	syslog(LOG_DEBUG, "Sleeping");
