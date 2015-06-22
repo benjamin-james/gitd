@@ -15,7 +15,7 @@
 		if (A < 0) \
 			exit(EXIT_FAILURE); }
 void loop(const char *gitd_directory, const char *notify_command);
-int load_config(const char *location, char *notify_command, char *git_dir, int sleep_secs);
+int load_config(const char *location, char *notify_command, char *git_dir, int *sleep_secs);
 
 int main(int argc, char **argv)
 {
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 		check_less_zero(sid);
 	}
 	openlog(*argv, LOG_PID, LOG_DAEMON);
-	load_config(CONFDIR "/gitd.conf", notify_command, git_dir, sleep_secs);
+	check_less_zero(load_config(CONFDIR "/gitd.conf", notify_command, git_dir, &sleep_secs));
 	syslog(LOG_DEBUG, "Loaded config");
 
 	while (1) {
@@ -115,7 +115,7 @@ void replace_str(char *str, char *original, char *tok)
 	sprintf(buffer + (p - str), "%s%s", token, p + strlen(original));
 	strcpy(str, buffer);
 }
-int load_config(const char *location, char *notify_command, char *git_dir, int sleep_secs)
+int load_config(const char *location, char *notify_command, char *git_dir, int *sleep_secs)
 {
         FILE *f = fopen(location, "r");
 	char *key, *token, buffer[256];
@@ -137,7 +137,7 @@ int load_config(const char *location, char *notify_command, char *git_dir, int s
 		else if ((key = strstr(buffer, "Gitdir")) != NULL)
 			memcpy(git_dir, token, tlen + 1);
 		else if ((key = strstr(buffer, "Sleep")) != NULL)
-			sleep_secs = atoi(token);
+			*sleep_secs = atoi(token);
 		else if ((key = strstr(buffer, "Title")) != NULL)
 			replace_str(notify_command, "%T", token);
 		else if ((key = strstr(buffer, "Body")) != NULL)
