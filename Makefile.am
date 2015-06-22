@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
-
+CLEANFILES = $(NULL)
 edit_script = $(SED) \
 -e 's,%datadir%,$(datadir),'g \
 $(NULL)
