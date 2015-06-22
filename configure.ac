@@ -7,10 +7,9 @@ AC_CONFIG_SRCDIR([gitd.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
-GITD_DIR_SUB="${prefix}/share/${PACKAGE_NAME}"
-AC_SUBST(GITD_DIR_SUB)
-AC_CONFIG_FILES([gitd.conf])
-AC_SUBST(prefix)
+AC_SUBST([PACKAGE])
+AC_CONFIG_FILES([gitd.conf.in])
+AC_SUBST([prefix])
 AC_CONFIG_FILES([gitd.service])
 
 # Checks for programs.
@@ -18,6 +17,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
+AC_PROG_SED
 
 # Checks for libraries.
 

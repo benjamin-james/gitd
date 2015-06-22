@@ -2,7 +2,7 @@
 Notify = /usr/bin/notify-send "%T" "%B"
 
 # The git dir is here
-Gitdir = @GITD_DIR_SUB@
+Gitdir = %datadir%/@PACKAGE@
 
 # Specifies how long the check interval is in seconds (whole number)
 Sleep = 60
