@@ -87,17 +87,18 @@ int notify(const char *notify_command)
  */
 void loop(const char *gitd_directory, const char *notify_command)
 {
-	int er = chdir(gitd_directory);
 	DIR *cwd = opendir(gitd_directory);
 	struct dirent *entry = NULL;
+	check_less_zero(chdir(gitd_directory));
 	syslog(LOG_DEBUG, "in loop");
 	check_null(cwd);
-        for (entry = readdir(cwd); entry != NULL; er = chdir(git_dir), entry = readdir(cwd)) {
+        for (entry = readdir(cwd); entry != NULL; entry = readdir(cwd)) {
 		if (is_git_directory(entry->d_name) == 0)
 			continue;
 		check_less_zero(chdir(entry->d_name));
 		if (is_updated())
 			check_less_zero(notify(notify_command));
+		check_less_zero(chdir(git_dir));
 	}
 	closedir(cwd);
 	syslog(LOG_DEBUG, "Sleeping");
