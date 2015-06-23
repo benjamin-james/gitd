@@ -64,7 +64,8 @@ int is_updated(void)
 {
 	int upd = 0;
 	char file_buf[256];
-	FILE *f = popen("git fetch 2>&1", "r");
+	char *fetch_command = "git fetch 2>&1";
+	FILE *f = popen(fetch_command, "r");
 	if (fgets(file_buf, sizeof(file_buf), f))
 		upd = 1;
 	check_less_zero(pclose(f));
