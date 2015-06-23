@@ -11,10 +11,12 @@ If there is, it will send a notification to the user.
 
 It is a forking daemon, so you don't need to do too much to set it up.
 
-The configuration should usually install to "/etc/gitd/gitd.conf".
+The configuration should usually install to '/usr/local/etc/gitd.conf', so if you want to change that, specify --sysconfdir=/etc/gitd or whatever when you type ./configure
 
-Type './autogen.sh', './configure', 'make' and 'sudo make install' to install it in "/usr/local/bin/" and the configuration file to "/usr/local/etc/".
+Type './autogen.sh', './configure', 'make' and 'sudo make install' to install it in '/usr/local/bin/' and the configuration file to '/usr/local/etc/'.
+
+For more info, see gitd(8)
 * systemd
 Copy gitd.service to /usr/lib/systemd/system/gitd.service
 * Others
-Put 'gitd' in your ~/.bash_profile to start it at user login
+You can simply run gitd, but you can also start it at login by putting it in your ~/.bash_profile
