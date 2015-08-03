@@ -9,7 +9,7 @@ bin_PROGRAMS = gitd
 gitd_SOURCES = gitd.c
 gitd_CPPFLAGS = -DCONFDIR="\"$(sysconfdir)"\"
 
-dist_man_MANS = gitd.8
+dist_man_MANS = man/gitd.8
 dist_sysconf_DATA = gitd.conf
 
 gitd.conf: gitd.conf.in Makefile

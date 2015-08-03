@@ -1,0 +1,14 @@
+#For title and body, the format specifiers are the same as git-log(1)
+# except that %n is repository name. Currently this does not have the
+# same full-featured-ness that git-log(1) has, but I think it is enough.
+#The title of the notification
+Title = %n
+
+#The body of the notification
+Body = %an <%ae> \n%m
+
+# The git dir is here
+Gitdir = %datadir%/gitd
+
+# Specifies how long the check interval is in seconds (whole number)
+Sleep = 60
