@@ -3,9 +3,9 @@
 
 AC_PREREQ([2.69])
 AC_INIT([gitd], [0.4.0], [benjamin-james@utulsa.edu])
-AC_CONFIG_SRCDIR([gitd.c])
+AC_CONFIG_SRCDIR([src/gitd.c])
 AM_INIT_AUTOMAKE
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_SUBST([PACKAGE])
 AC_CONFIG_FILES([gitd.conf.in])

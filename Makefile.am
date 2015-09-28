@@ -6,7 +6,7 @@ $(NULL)
 
 AM_CFLAGS = -W -Wall -Werror -g
 bin_PROGRAMS = gitd
-gitd_SOURCES = gitd.c
+gitd_SOURCES = src/gitd.c
 gitd_CPPFLAGS = -DCONFDIR="\"$(sysconfdir)"\"
 
 dist_man_MANS = man/gitd.8

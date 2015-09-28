@@ -29,8 +29,6 @@ int main(int argc, char **argv)
 		check_less_zero(pid);
 		if (pid > 0)
 			exit(EXIT_SUCCESS);
-		sid = setsid();
-		check_less_zero(sid);
 	}
 	openlog(*argv, LOG_PID, LOG_DAEMON);
 	check_less_zero(load_config(CONFDIR "/gitd.conf", notify_command, git_dir, &sleep_secs));
