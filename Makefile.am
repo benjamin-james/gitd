@@ -4,9 +4,9 @@ edit_script = $(SED) \
 -e 's,%datadir%,$(datadir),'g \
 $(NULL)
 
-AM_CFLAGS = -W -Wall -Werror -g
+AM_CFLAGS = -W -Wall -Werror -ggdb3
 bin_PROGRAMS = gitd
-gitd_SOURCES = src/gitd.c
+gitd_SOURCES = src/main.c src/git.c src/input.c src/env.c src/log.c src/util.c
 gitd_CPPFLAGS = -DCONFDIR="\"$(sysconfdir)"\"
 
 dist_man_MANS = man/gitd.8

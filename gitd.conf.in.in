@@ -1,14 +1,47 @@
-# Notify with this command
-Notify = /usr/bin/notify-send "%T" "%B"
+# This configuration file sets environment variables
+# to be used by gitd. gitd sources this file to extract these.
 
 # The git dir is here
-Gitdir = %datadir%/@PACKAGE@
+export DIR="%datadir%/@PACKAGE@"
 
 # Specifies how long the check interval is in seconds (whole number)
-Sleep = 60
+export SLEEP="60"
 
-# What will be filled in for %T in 'Notify'
-Title = basename $PWD
+# A variable to be filled in $NOTIFY
+export TITLE="basename \$PWD"
 
-# What will be filled in for %B in 'Notify'
-Body = git log -n 1 --pretty=format:'%d%n%an%n%s'
+# Another variable to be filled in $NOTIFY
+export BODY="git log -n 1 --pretty=format:'%d%n%an%n%s'"
+
+# Notify with this command
+#
+# Note that this command can substitute other variables to be evaluated
+# at the time of notification.
+export NOTIFY="/usr/bin/notify-send \"\`$TITLE\`\" \"\`$BODY\`\""
+
+# The command for checking if the repository is updated
+# It can be 'fetch' or 'pull' or whatever
+export GIT_CHECK="git fetch"
+
+# Sets what the program does
+# Either 'oneshot' or 'loop', which either
+# exits after checking, or stays around and
+# dispatches every $SLEEP seconds
+export FUNCTION="loop"
+
+# If the program forks and the parent exits after this file is loaded
+# Either 'true' of 'false'
+export FORKING="true"
+
+# Sets what to do before checking the repository
+# Either 'fork' or 'thread' or 'none'
+export FOREACH_REPO="thread"
+
+# Sets what to do after every $SLEEP seconds
+# if $FUNCTION is 'loop'
+# Either 'fork' or 'thread' or 'none'
+export FOREACH_LOOP="fork"
+
+# Log file to output to
+# Default /dev/stderr
+export LOG_FILE="/dev/stderr"
